@@ -34,7 +34,17 @@
                 return;
             }
             //親タグに設定しているformタグが送信処理をする
-            span.parentNode.submit();
+            // span.parentNode.submit();
+
+            fetch('?ation=delete', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    id: span.dataset.id,
+                    token: span.dataset.token,
+                }),
+            });
+
+            span.parentNode.remove();
         })
     });
 }
@@ -49,7 +59,19 @@
         if (!confirm('Are you sure')) {
             return;
         }
-        //親タグに設定しているformタグが送信処理をする
-        purge.parentNode.submit();
+
+        fetch('?ation=purge', {
+            method: 'POST',
+            body: new URLSearchParams({
+                token: purge.dataset.token,
+            }),
+        });
+
+        const lis = document.querySelectorAll('li');
+        lis.forEach(li => {
+            if (li.children[0].checked) {
+                li.remove();
+            }
+        });
     });
 }

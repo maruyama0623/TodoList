@@ -7,7 +7,8 @@ use MyApp\Todo;
 use MyApp\Utils;
 
 
-/*データベース（PDO）設定*/ 
+/*データベース（PDO）設定*/
+
 $pdo = Database::getInstance();
 
 //Todoクラスのインスタンス
@@ -32,11 +33,8 @@ $todos = $todo->getAll();
 <body>
   <main>
     <header>
-    <h1>Todos</h1>
-    <form action="?action=purge" method="post" class="">
-      <span class="purge">purge</span>
-      <input type="hidden" name="token" value="<?= Utils::h($_SESSION['token']); ?>">
-    </form>
+      <h1>Todos</h1>
+      <span data-token="<?= Utils::h($_SESSION['token']); ?>" class="purge">purge</span>
     </header>
 
     <form action="?action=add" method="post">
@@ -47,19 +45,11 @@ $todos = $todo->getAll();
     <ul>
       <?php foreach ($todos as $todo) : ?>
         <li>
-          <input type="checkbox" 
-          data-id="<?= Utils::h($todo->id); ?>" 
-          data-token="<?= Utils::h($_SESSION['token']); ?>" 
-          <?= $todo->is_done ? 'checked' : ''; ?>>
-
+          <input type="checkbox" data-id="<?= Utils::h($todo->id); ?>" data-token="<?= Utils::h($_SESSION['token']); ?>" <?= $todo->is_done ? 'checked' : ''; ?>>
+          <!-- カスタムデータ属性 data-id="" data-token=""を使用する -->
           <span><?= Utils::h($todo->title); ?></span>
 
-          <form action="?action=delete" method="post" class="delete-form">
-            <span class="delete">×</span>
-            <input type="hidden" name="id" value="<?= Utils::h($todo->id); ?>">
-            <input type="hidden" name="token" value="<?= Utils::h($_SESSION['token']); ?>">
-          </form>
-
+          <span data-id:="<?= Utils::h($todo->id); ?>" data-token="<?= Utils::h($_SESSION['token']); ?>" class="delete">×</span>
 
         </li>
       <?php endforeach; ?>
