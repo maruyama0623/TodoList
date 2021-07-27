@@ -7,9 +7,21 @@
     const checkboxs = document.querySelectorAll('input[type="checkbox"]');
     checkboxs.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
-            //親タグに設定しているformタグが送信処理をする
-            checkbox.parentNode.submit();
-        })
+
+            //親タグに設定しているformタグが送信処理をする→ただsubmitだとページ遷移が起きる難点が…
+            // checkbox.parentNode.submit();
+
+            //fetch(url,options)でページ遷移せずにデータを送信できる
+            fetch('?ation=toggle', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    id: checkbox.dataset.id,
+                    token: checkbox.dataset.token,
+                }),
+            });
+
+            checkbox.nextElementSibling.classList.toggle('done');
+        });
     });
 }
 

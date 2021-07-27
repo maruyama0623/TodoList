@@ -35,7 +35,7 @@ class Todo
                     exit;
             }
 
-            header('Location: ' . SITE_URL);
+            // header('Location: ' . SITE_URL);サイトを読み込み
             exit;
         }
     }
