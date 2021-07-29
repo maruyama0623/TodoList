@@ -16,11 +16,13 @@ class Todo
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             //  トークンチェック
             Token::validate();
-
             $action = filter_input(INPUT_GET, 'action');
+
             switch ($action) {
                 case 'add':
-                    $this->add();
+                    $id = $this->add();
+                    header('Content-Type: application/json');
+                    echo json_encode(['id' => $id]);
                     break;
                 case 'toggle':
                     $this->toggle();
@@ -50,6 +52,7 @@ class Todo
         $stmt = $this->pdo->prepare("INSERT INTO todos (title) VALUES (:title)");
         $stmt->bindValue('title', $title, \PDO::PARAM_STR);
         $stmt->execute();
+        return (int) $this->pdo->lastInsertId();
     }
 
 

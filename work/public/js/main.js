@@ -1,34 +1,26 @@
 'use strict';
 
-
 //チェックボックスにチェックを入れるだけではデータ送信されないのでJSでsubmit処理をする
 //送信先：formタグのアクション属性を確認する
 {
-    const checkboxs = document.querySelectorAll('input[type="checkbox"]');
-    checkboxs.forEach(checkbox => {
-        checkbox.addEventListener('change', () => {
+    const token = document.querySelector('main').dataset.token;
+    const input = document.querySelector('[name="title"]');
+    const ul = document.querySelector('ul');
 
-            //親タグに設定しているformタグが送信処理をする→ただsubmitだとページ遷移が起きる難点が…
-            // checkbox.parentNode.submit();
+    input.focus();
 
-            //fetch(url,options)でページ遷移せずにデータを送信できる
-            fetch('?ation=toggle', {
+    ul.addEventListener('click', e =>{
+        if(e.target.type === 'checkbox'){
+            fetch('?action=toggle', {
                 method: 'POST',
                 body: new URLSearchParams({
-                    id: checkbox.dataset.id,
-                    token: checkbox.dataset.token,
+                    id: e.target.parentNode.dataset.id,
+                    token: token,
                 }),
             });
-        });
-    });
-}
+        }
 
-//×をクリックしただけではデータ送信されないのでJSでsubmit処理をする
-//送信先：formタグのアクション属性を確認する
-{
-    const deletes = document.querySelectorAll('.delete');
-    deletes.forEach(span => {
-        span.addEventListener('click', () => {
+        if(e.target.classList.contains('delete')){
             //確認をキャンセルしたら何もしない
             if (!confirm('Are you sure')) {
                 return;
@@ -36,23 +28,62 @@
             //親タグに設定しているformタグが送信処理をする
             // span.parentNode.submit();
 
-            fetch('?ation=delete', {
+            fetch('?action=delete', {
                 method: 'POST',
                 body: new URLSearchParams({
-                    id: span.dataset.id,
-                    token: span.dataset.token,
+                    id: e.target.parentNode.dataset.id,
+                    token: token,
                 }),
             });
 
-            span.parentNode.remove();
+            e.target.parentNode.remove();
+        }
+
+    })
+
+    function addTodo(id,titleValue) {
+        const li = document.createElement('li');
+        li.dataset.id = id;
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+
+        const title = document.createElement('span');
+        title.textContent = titleValue;
+
+        const deleteSpan = document.createElement('span');
+        deleteSpan.textContent = "×";
+        deleteSpan.classList.add('delete');
+
+        li.appendChild(checkbox);
+        li.appendChild(title);
+        li.appendChild(deleteSpan);
+
+        
+        ul.insertBefore(li, ul.firstChild);
+    }
+
+    document.querySelector('form').addEventListener('submit', e => {
+        e.preventDefault();// ページ遷移しないため
+
+        const title = input.value;
+        fetch('?action=add', {
+            method: 'POST',
+            body: new URLSearchParams({
+                title: title,
+                token: token,
+            }),
         })
+            .then(response => response.json())
+            .then(json => {
+                addTodo(json.id, title);
+            });
+
+        input.value = "";
+        input.focus();
+
     });
-}
 
-
-//purgeをクリックしただけではデータ送信されないのでJSでsubmit処理をする
-//送信先：formタグのアクション属性を確認する
-{
     const purge = document.querySelector('.purge');
     purge.addEventListener('click', () => {
         //確認をキャンセルしたら何もしない
@@ -60,10 +91,10 @@
             return;
         }
 
-        fetch('?ation=purge', {
+        fetch('?action=purge', {
             method: 'POST',
             body: new URLSearchParams({
-                token: purge.dataset.token,
+                token: token,
             }),
         });
 

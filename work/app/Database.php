@@ -21,7 +21,6 @@ class Database
                     ]
                 );
             }
-
             // getInstanceを実行した結果を返すためにreturn $instance;を追記している
             return self::$instance;
         } catch (\PDOException $e) {

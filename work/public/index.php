@@ -31,26 +31,22 @@ $todos = $todo->getAll();
 </head>
 
 <body>
-  <main>
+  <main data-token="<?= Utils::h($_SESSION['token']); ?>">
     <header>
       <h1>Todos</h1>
-      <span data-token="<?= Utils::h($_SESSION['token']); ?>" class="purge">purge</span>
+      <span class="purge">purge</span>
     </header>
 
-    <form action="?action=add" method="post">
+    <form>
       <input type="text" name="title" placeholder="type new todo.">
-      <input type="hidden" name="token" value="<?= Utils::h($_SESSION['token']); ?>">
     </form>
 
     <ul>
       <?php foreach ($todos as $todo) : ?>
-        <li>
-          <input type="checkbox" data-id="<?= Utils::h($todo->id); ?>" data-token="<?= Utils::h($_SESSION['token']); ?>" <?= $todo->is_done ? 'checked' : ''; ?>>
-          <!-- カスタムデータ属性 data-id="" data-token=""を使用する -->
+        <li data-id="<?= Utils::h($todo->id); ?>"><!-- カスタムデータ属性 data-id=""を使用する -->
+          <input type="checkbox" <?= $todo->is_done ? 'checked' : ''; ?>>
           <span><?= Utils::h($todo->title); ?></span>
-
-          <span data-id:="<?= Utils::h($todo->id); ?>" data-token="<?= Utils::h($_SESSION['token']); ?>" class="delete">×</span>
-
+          <span class="delete">×</span>
         </li>
       <?php endforeach; ?>
     </ul>
